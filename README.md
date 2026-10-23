@@ -1,10 +1,13 @@
-# WiredDMS — виджет «Wired (Lain)» для DankMaterialShell
+# WiredDMS — a "Wired (Lain)" widget for DankMaterialShell
 
-CRT-панель с бегущими сообщениями в духе *Serial Experiments Lain*: сканлайны,
-посимвольная печать, глитчи, японская строка над английской, часы в кадре.
+[English](README.md) · [Русский](README.ru.md)
 
-Это плагин рабочего стола для [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS),
-написанный на [Quickshell](https://quickshell.org/).
+A CRT panel with scrolling messages in the spirit of *Serial Experiments Lain*:
+scanlines, character-by-character typing, glitches, a Japanese line above the
+English one, a clock in the corner.
+
+This is a desktop plugin for [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS),
+written in [Quickshell](https://quickshell.org/).
 
 ```
 ┌────────────────────────────────────────────┐
@@ -15,28 +18,28 @@ CRT-панель с бегущими сообщениями в духе *Serial 
 └────────────────────────────────────────────┘
 ```
 
-## Что умеет
+## Features
 
-- Сообщения сменяют друг друга: печать по символам, пауза, угасание, следующее.
-- Порядок — по слоям (`LAYER 01`…`LAYER NN`) или случайный.
-- Глитч-вспышка при смене сообщения.
-- Японская строка опционально; шрифт добирается фолбэком.
-- Палитра: своя CRT-палитра или цвета темы DMS.
-- Таскается мышкой, тянется за угол, кегль — колесом. Позиция и размер
-  сохраняются **для каждого монитора** отдельно.
+- Messages rotate on their own: typing, pause, fade out, next.
+- Order is by layer (`LAYER 01`…`LAYER NN`) or random.
+- A glitch flash whenever the message changes.
+- The Japanese line is optional; the font falls back automatically.
+- Palette: either its own CRT colors or the DMS theme colors.
+- Draggable, resizable, font size via the mouse wheel. Position and size are
+  stored **per monitor**.
 
-## Требования
+## Requirements
 
-| Что | Версия |
+| What | Version |
 |---|---|
 | DankMaterialShell | ≥ 1.2.0 |
 | Quickshell | ≥ 0.3.2 |
-| Шрифт | `JetBrainsMono Nerd Font Mono` (японский — фолбэк из `Noto Sans CJK JP`) |
+| Font | `JetBrainsMono Nerd Font Mono` (Japanese falls back to `Noto Sans CJK JP`) |
 
-Шрифт не обязателен, но без него виджет выглядит иначе — подставь свой в
-`monoFont` в `LainDesktopWidget.qml`, если этого нет.
+The font is not mandatory, but the widget looks different without it — set your
+own in `monoFont` inside `LainDesktopWidget.qml`.
 
-## Установка
+## Installation
 
 ```bash
 git clone https://github.com/Protectore/WiredDMS.git
@@ -44,69 +47,69 @@ cd WiredDMS
 ./install-dms-plugin.sh
 ```
 
-Скрипт копирует `dms-plugin/*` в `~/.config/DankMaterialShell/plugins/lainWidget/`.
+The script copies `dms-plugin/*` into `~/.config/DankMaterialShell/plugins/lainWidget/`.
 
-Дальше в DMS: **Настройки → Рабочий стол → добавить виджет «Wired (Lain)»**.
+Then in DMS: **Settings → Desktop → add the "Wired (Lain)" widget**.
 
-После установки или правки файлов плагина — перезагрузить его:
+After installing or editing plugin files, reload it:
 
 ```bash
 id=$(ls /run/user/1000/quickshell/by-id/ | head -1)
 qs ipc -i "$id" call plugin-scan reload lainWidget
-qs ipc -i "$id" call plugin-scan status lainWidget   # ждём «loaded  desktop»
+qs ipc -i "$id" call plugin-scan status lainWidget   # expect "loaded  desktop"
 ```
 
-> **Не путай `reload` и `rescan`.** Команда `plugin-scan rescan` выгружает плагин и
-> обратно **не поднимает** — виджет исчезнет с экрана, а `status` будет `unloaded`.
-> Поднимает только `reload`.
+> **Do not confuse `reload` with `rescan`.** The `plugin-scan rescan` command
+> unloads the plugin and does **not** bring it back — the widget disappears from
+> the screen and `status` reads `unloaded`. Only `reload` brings it up.
 
-## Управление
+## Controls
 
-| Действие | Как |
+| Action | How |
 |---|---|
-| Перетащить | **правая кнопка мыши** по панели (левая проходит сквозь — clickThrough) |
-| Изменить размер | **правая кнопка** по правому нижнему углу панели |
-| Кегль текста | **колесо мыши** по панели (работает, когда clickThrough = false) |
-| Настройки | Настройки DMS → Рабочий стол → виджеты → «Wired (Lain)» |
+| Move | **right mouse button** on the panel (the left one passes through — clickThrough) |
+| Resize | **right mouse button** on the bottom-right corner of the panel |
+| Font size | **mouse wheel** over the panel (works while clickThrough = false) |
+| Settings | DMS Settings → Desktop → widgets → "Wired (Lain)" |
 
-Пока панель тащат, DMS поднимает её в слой `Overlay`, после — возвращает в `Bottom`.
-Позиция и размер пишутся в `~/.local/state/DankMaterialShell/session.json` →
-`desktopWidgetInstancePositions`.
+While the panel is being dragged, DMS raises it to the `Overlay` layer and puts it
+back into `Bottom` afterwards. Position and size are written to
+`~/.local/state/DankMaterialShell/session.json` → `desktopWidgetInstancePositions`.
 
-## Настройки
+## Settings
 
-| Параметр | По умолчанию | Смысл |
+| Option | Default | Meaning |
 |---|---|---|
-| `cycleInterval` | `45` | пауза между сообщениями, с |
-| `holdDuration` | `13` | сколько сообщение на экране, с |
-| `typeSpeed` | `32` | скорость печати, мс на символ |
-| `randomOrder` | `false` | случайный порядок вместо «по слоям» |
-| `showJp` | `true` | показывать японскую строку |
-| `colorMode` | `custom` | `custom` — своя палитра, `theme` — цвета темы DMS |
-| `customInk` | `#dff3f5` | цвет текста в режиме `custom` |
-| `backgroundOpacity` | `66` | прозрачность фона, % |
-| `fontPixelSize` | `17` | базовый кегль (масштабируется от размера окна) |
+| `cycleInterval` | `45` | pause between messages, s |
+| `holdDuration` | `13` | how long a message stays on screen, s |
+| `typeSpeed` | `32` | typing speed, ms per character |
+| `randomOrder` | `false` | random order instead of layer order |
+| `showJp` | `true` | show the Japanese line |
+| `colorMode` | `custom` | `custom` — own palette, `theme` — DMS theme colors |
+| `customInk` | `#dff3f5` | text color in `custom` mode |
+| `backgroundOpacity` | `66` | background opacity, % |
+| `fontPixelSize` | `17` | base font size (scales with the window size) |
 
-## Свои сообщения
+## Your own messages
 
-Список лежит прямо в `LainDesktopWidget.qml` (свойство `messages`), формат
-`{ layer, jp, en }`: `layer` — подпись справа сверху, `jp` — строка над текстом
-(может быть пустой), `en` — основной текст. Правится руками, перезагрузка плагина
-подхватывает изменения.
+The list lives right in `LainDesktopWidget.qml` (the `messages` property), formatted
+as `{ layer, jp, en }`: `layer` is the label in the top-right corner, `jp` is the
+line above the text (may be empty), `en` is the main text. Edit it by hand and
+reload the plugin to pick up the changes.
 
-## Файлы
+## Files
 
-| Файл | Что внутри |
+| File | What is inside |
 |---|---|
-| `dms-plugin/plugin.json` | манифест DMS-плагина |
-| `dms-plugin/LainDesktopWidget.qml` | сам виджет: панель, сообщения, настройки по умолчанию |
-| `dms-plugin/LainSettings.qml` | панель настроек в DMS |
-| `install-dms-plugin.sh` | установка в `~/.config/DankMaterialShell/plugins/lainWidget/` |
+| `dms-plugin/plugin.json` | the DMS plugin manifest |
+| `dms-plugin/LainDesktopWidget.qml` | the widget itself: panel, messages, defaults |
+| `dms-plugin/LainSettings.qml` | the settings panel in DMS |
+| `install-dms-plugin.sh` | installs into `~/.config/DankMaterialShell/plugins/lainWidget/` |
 
-## Лицензия
+## License
 
-Код — MIT (см. [LICENSE](LICENSE)).
+The code is MIT (see [LICENSE](LICENSE)).
 
-Строки сообщений: часть — узнаваемые реплики из *Serial Experiments Lain*, часть —
-стилизация «под Wired». Права на исходный сериал принадлежат его правообладателям;
-это некоммерческая фанатская работа.
+The message strings: some are recognizable quotes from *Serial Experiments Lain*,
+some are stylized "in the spirit of" the Wired. Rights to the original series
+belong to its rights holders; this is a non-commercial fan work.
