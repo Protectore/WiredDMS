@@ -1,19 +1,13 @@
-// "Wired (Lain)" widget as a DMS desktop plugin.
+// The widget itself: panel, messages and default settings.
 //
-// What the DesktopPluginWrapper gives us (see Modules/Plugins/DesktopPluginWrapper.qml in DMS):
-//   • right mouse button on the widget drags it, bottom-right corner resizes it;
-//   • size and position are stored per monitor in
-//     ~/.local/state/DankMaterialShell/session.json → desktopWidgetInstancePositions;
-//   • while the widget is dragged, the window is raised to the Overlay layer, then back to Bottom;
-//   • clicks pass through (clickThrough = true in the default config), so the left
-//     button and the wheel reach whatever is underneath the widget.
+// The panel is draggable with the right mouse button and resizable from its
+// bottom-right corner; size and position are stored per monitor. The mouse wheel
+// changes the font size, and clicks pass through to whatever is underneath.
 
 pragma ComponentBehavior: Bound
 
 import QtQuick
 import Quickshell
-import Quickshell.Io
-import Quickshell.Wayland
 import qs.Common
 import qs.Modules.Plugins
 
@@ -24,7 +18,7 @@ DesktopPluginComponent {
     minWidth: 380
     minHeight: 170
 
-    /* ── knobs (exposed in the widget settings in DMS) ─────────────────── */
+    /* knobs (exposed in the widget settings in DMS) */
     readonly property int cycleInterval: pluginData.cycleInterval ?? 45
     readonly property int holdDuration: pluginData.holdDuration ?? 13
     readonly property int typeSpeed: pluginData.typeSpeed ?? 32
@@ -35,7 +29,7 @@ DesktopPluginComponent {
     readonly property real backgroundOpacity: (pluginData.backgroundOpacity ?? 66) / 100
     readonly property bool showJp: pluginData.showJp ?? true
 
-    /* ── theme: either our own palette or the DMS colors ───────────────── */
+    /* theme: either our own palette or the DMS colors */
     readonly property bool useTheme: colorMode === "theme" || colorMode === "primary"
     readonly property color ink: useTheme ? Theme.surfaceText : customInk
     readonly property color dim: useTheme ? Theme.primary : Qt.rgba(customInk.r, customInk.g, customInk.b, 0.62)
@@ -46,7 +40,7 @@ DesktopPluginComponent {
         : Qt.rgba(0.024, 0.039, 0.043, backgroundOpacity)
     readonly property color glitchInk: useTheme ? Theme.error : "#ffb3bd"
 
-    /* ── preset messages (edit them here) ──────────────────────────────── */
+    /* preset messages (edit them here) */
     readonly property var messages: [
         { layer: "LAYER 01", jp: "こんにちは。",            en: "Hello." },
         { layer: "LAYER 02", jp: "わたしはここにいる。",      en: "I am here." },
@@ -59,11 +53,11 @@ DesktopPluginComponent {
         { layer: "LAYER 09", jp: "",                     en: "Are you connected to the Wired?" },
         { layer: "LAYER 10", jp: "",                     en: "Do you hear me?" },
         { layer: "LAYER 11", jp: "現実とワイアードの境界は消えていく。", en: "The border between the real world and the Wired is fading." },
-        { layer: "LAYER 12", jp: "",                     en: "Tachibana General Laboratories — Copland OS 5.0" },
+        { layer: "LAYER 12", jp: "",                     en: "Tachibana General Laboratories - Copland OS 5.0" },
         { layer: "LAYER 13", jp: "みんな、レインを愛してる。",   en: "Let's all love Lain." },
         { layer: "LAYER 14", jp: "",                     en: "Knights of the Eastern Calculus." },
         { layer: "LAYER 15", jp: "",                     en: "No matter where you go, everyone's connected." },
-        { layer: "LAYER 16", jp: "",                     en: "Protocol 7 — psyche processor online." },
+        { layer: "LAYER 16", jp: "",                     en: "Protocol 7 - psyche processor online." },
         { layer: "LAYER 17", jp: "あなたは誰？",            en: "Who are you?" },
         { layer: "LAYER 18", jp: "",                     en: "It is not a lie. The Wired is real." },
         { layer: "LAYER 19", jp: "どこにいても、あなたとつながっている。", en: "Wherever you are, I am connected to you." },
@@ -71,7 +65,7 @@ DesktopPluginComponent {
         { layer: "LAYER 21", jp: "接続が切断された。",        en: "Connection terminated." },
         { layer: "LAYER 22", jp: "",                     en: "> unsolicited packet from the Wired" },
         { layer: "LAYER 23", jp: "",                     en: "> tracing route to layer 07 ... ok" },
-        { layer: "LAYER 24", jp: "",                     en: "> noise floor 0.04% — signal clean" },
+        { layer: "LAYER 24", jp: "",                     en: "> noise floor 0.04% - signal clean" },
         { layer: "LAYER 25", jp: "",                     en: "> the Wired is listening" },
         { layer: "LAYER 26", jp: "眠らないで。",            en: "Don't fall asleep." },
         { layer: "LAYER 27", jp: "",                     en: "You are watching, aren't you?" },
@@ -88,7 +82,7 @@ DesktopPluginComponent {
     readonly property int chromePixelSize: Math.max(7, Math.round(10 * fontScale))
     readonly property int pad: Math.max(6, Math.round(14 * fontScale))
 
-    /* ── state ─────────────────────────────────────────────────────────── */
+    /* state */
     property var current: null
     property int revealed: 0
     property bool typing: false
@@ -134,30 +128,12 @@ DesktopPluginComponent {
         holdTimer.stop();
     }
 
-    // A right-click without movement advances to the next message (dragArea.released
-    // fires in the wrapper too, but after savePosition — the position is unaffected).
+    // A right-click without movement advances to the next message.
     function peekNext() {
         showNext();
     }
 
-    // Liveness check from the outside: qs -c dms ipc call lainWidget ping
-    // and to advance a message:          qs -c dms ipc call lainWidget next
-    IpcHandler {
-        target: "lainWidget"
-
-        function ping(): string {
-            return "lainWidget alive: instance=" + root.instanceId
-                + " size=" + Math.round(root.widgetWidth) + "x" + Math.round(root.widgetHeight)
-                + " text=" + (root.current ? root.current.en : "-");
-        }
-
-        function next(): string {
-            root.showNext();
-            return "NEXT: " + (root.current ? root.current.en : "-");
-        }
-    }
-
-    /* ── timers ────────────────────────────────────────────────────────── */
+    /* timers */
     Timer {
         interval: typeSpeed
         repeat: true
@@ -233,10 +209,10 @@ DesktopPluginComponent {
     }
 
     // Take the duration from the DMS theme instead of hardcoding it: the wrapper
-    // (DesktopPluginWrapper.qml) puts its own revealFade on the loader with a length
-    // of exactly Theme.mediumDuration and the same OutCubic curve. If the numbers
-    // diverge, the two curves multiply — the fade becomes abrupt at the start and
-    // sluggish in the tail. Keep them in sync.
+    // puts its own revealFade on the loader with a length of exactly
+    // Theme.mediumDuration and the same OutCubic curve. If the numbers diverge,
+    // the two curves multiply and the fade becomes abrupt at the start and
+    // sluggish in the tail.
     Behavior on contentOpacity {
         NumberAnimation {
             duration: Theme.mediumDuration
@@ -244,7 +220,7 @@ DesktopPluginComponent {
         }
     }
 
-    /* ── chassis ───────────────────────────────────────────────────────── */
+    /* chassis */
     Rectangle {
         id: frame
         anchors.fill: parent
@@ -375,7 +351,7 @@ DesktopPluginComponent {
                 margins: root.pad
                 bottomMargin: Math.max(5, root.pad - 3)
             }
-            text: root.typing ? "▚ receiving…" : (root.current ? "▚ sync ok" : "▚ standby")
+            text: root.typing ? "▚ receiving..." : (root.current ? "▚ sync ok" : "▚ standby")
             color: root.dim
             opacity: 0.7
             font {

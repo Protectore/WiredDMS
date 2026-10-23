@@ -1,13 +1,13 @@
-# Резервные копии, которые плодят правки конфигов DMS/niri
+# Backups left behind by edits to the DMS/niri configs
 *.backup*
 *.orig
 *.rej
 
-# Хвосты редакторов
+# Editor leftovers
 *~
 *.swp
 .DS_Store
 
-# Ничего из этого в репозитории не нужно
+# None of this belongs in the repository
 /.idea/
 /.vscode/

@@ -1,6 +1,6 @@
 // Settings for the "Wired (Lain)" widget in DMS.
-// The host (PluginDesktopWidgetSettings) injects instanceData and instanceId here,
-// so we write straight into this instance's config — each one has its own palette and rhythm.
+// The host injects instanceData and instanceId here, so each widget instance
+// keeps its own palette and rhythm.
 
 pragma ComponentBehavior: Bound
 

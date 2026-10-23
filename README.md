@@ -1,6 +1,6 @@
-# WiredDMS — a "Wired (Lain)" widget for DankMaterialShell
+# WiredDMS - a "Wired (Lain)" widget for DankMaterialShell
 
-[English](README.md) · [Русский](README.ru.md)
+[English](README.md) | [Русский](README.ru.md)
 
 A CRT panel with scrolling messages in the spirit of *Serial Experiments Lain*:
 scanlines, character-by-character typing, glitches, a Japanese line above the
@@ -21,7 +21,7 @@ written in [Quickshell](https://quickshell.org/).
 ## Features
 
 - Messages rotate on their own: typing, pause, fade out, next.
-- Order is by layer (`LAYER 01`…`LAYER NN`) or random.
+- Order is by layer (`LAYER 01` to `LAYER NN`) or random.
 - A glitch flash whenever the message changes.
 - The Japanese line is optional; the font falls back automatically.
 - Palette: either its own CRT colors or the DMS theme colors.
@@ -32,11 +32,11 @@ written in [Quickshell](https://quickshell.org/).
 
 | What | Version |
 |---|---|
-| DankMaterialShell | ≥ 1.2.0 |
-| Quickshell | ≥ 0.3.2 |
+| DankMaterialShell | >= 1.2.0 |
+| Quickshell | >= 0.3.2 |
 | Font | `JetBrainsMono Nerd Font Mono` (Japanese falls back to `Noto Sans CJK JP`) |
 
-The font is not mandatory, but the widget looks different without it — set your
+The font is not mandatory, but the widget looks different without it. Set your
 own in `monoFont` inside `LainDesktopWidget.qml`.
 
 ## Installation
@@ -49,7 +49,7 @@ cd WiredDMS
 
 The script copies `dms-plugin/*` into `~/.config/DankMaterialShell/plugins/lainWidget/`.
 
-Then in DMS: **Settings → Desktop → add the "Wired (Lain)" widget**.
+Then in DMS: **Settings -> Desktop -> add the "Wired (Lain)" widget**.
 
 After installing or editing plugin files, reload it:
 
@@ -59,22 +59,23 @@ qs ipc -i "$id" call plugin-scan reload lainWidget
 qs ipc -i "$id" call plugin-scan status lainWidget   # expect "loaded  desktop"
 ```
 
-> **Do not confuse `reload` with `rescan`.** The `plugin-scan rescan` command
-> unloads the plugin and does **not** bring it back — the widget disappears from
-> the screen and `status` reads `unloaded`. Only `reload` brings it up.
+Use `reload`, not `rescan`: `plugin-scan rescan` unloads the plugin and does not
+bring it back, so the widget disappears from the screen and `status` reads
+`unloaded`.
 
 ## Controls
 
 | Action | How |
 |---|---|
-| Move | **right mouse button** on the panel (the left one passes through — clickThrough) |
+| Move | **right mouse button** on the panel (the left one passes through, clickThrough) |
 | Resize | **right mouse button** on the bottom-right corner of the panel |
 | Font size | **mouse wheel** over the panel (works while clickThrough = false) |
-| Settings | DMS Settings → Desktop → widgets → "Wired (Lain)" |
+| Settings | DMS Settings -> Desktop -> widgets -> "Wired (Lain)" |
 
 While the panel is being dragged, DMS raises it to the `Overlay` layer and puts it
 back into `Bottom` afterwards. Position and size are written to
-`~/.local/state/DankMaterialShell/session.json` → `desktopWidgetInstancePositions`.
+`~/.local/state/DankMaterialShell/session.json`, key
+`desktopWidgetInstancePositions`.
 
 ## Settings
 
@@ -85,7 +86,7 @@ back into `Bottom` afterwards. Position and size are written to
 | `typeSpeed` | `32` | typing speed, ms per character |
 | `randomOrder` | `false` | random order instead of layer order |
 | `showJp` | `true` | show the Japanese line |
-| `colorMode` | `custom` | `custom` — own palette, `theme` — DMS theme colors |
+| `colorMode` | `custom` | `custom` for its own palette, `theme` for DMS theme colors |
 | `customInk` | `#dff3f5` | text color in `custom` mode |
 | `backgroundOpacity` | `66` | background opacity, % |
 | `fontPixelSize` | `17` | base font size (scales with the window size) |
