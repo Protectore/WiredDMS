@@ -24,7 +24,7 @@ echo
 echo "Next:"
 echo "  1) add the widget in DMS: Settings -> Desktop -> \"Wired (Lain)\""
 echo "  2) after installing or editing plugin files, reload it:"
-echo "       id=\$(ls /run/user/1000/quickshell/by-id/ | head -1)"
+echo "       id=\$(ls \"/run/user/\$(id -u)/quickshell/by-id/\" | head -1)"
 echo "       qs ipc -i \$id call plugin-scan reload lainWidget"
 echo "       qs ipc -i \$id call plugin-scan status lainWidget   # expect 'loaded  desktop'"
 echo

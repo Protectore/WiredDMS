@@ -1,21 +1,22 @@
-# WiredDMS - виджет "Wired (Lain)" для DankMaterialShell
+# WiredDMS
+
+Виджет "Wired (Lain)" для рабочего стола [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS).
 
 [English](README.md) | [Русский](README.ru.md)
 
-CRT-панель с бегущими сообщениями в духе *Serial Experiments Lain*: сканлайны,
-посимвольная печать, глитчи, японская строка над английской, часы в кадре.
+![Лицензия](https://img.shields.io/badge/license-MIT-b9c8da)
+![DMS](https://img.shields.io/badge/DankMaterialShell-%3E%3D%201.2.0-9ccbfb)
+![Quickshell](https://img.shields.io/badge/Quickshell-%3E%3D%200.3.2-9ccbfb)
 
-Это плагин рабочего стола для [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS),
-написанный на [Quickshell](https://quickshell.org/).
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4b412028-7ac0-44b0-8831-290d9025d938" alt="Виджет перелистывает сообщения" width="640">
+</p>
 
-```
-┌────────────────────────────────────────────┐
-│ LAYER 07                          01:26:30 │
-│                                            │
-│ 神はここにいる。                             │
-│ God is here.▌                              │
-└────────────────────────────────────────────┘
-```
+CRT-панель, которая живёт на рабочем столе и перелистывает сообщения в духе
+*Serial Experiments Lain*: сканлайны, посимвольная печать, глитчи, японская
+строка над английской и часы в кадре.
+
+Это плагин рабочего стола для DMS, написанный на [Quickshell](https://quickshell.org/).
 
 ## Что умеет
 
@@ -53,7 +54,7 @@ cd WiredDMS
 После установки или правки файлов плагина перезагрузи его:
 
 ```bash
-id=$(ls /run/user/1000/quickshell/by-id/ | head -1)
+id=$(ls "/run/user/$(id -u)/quickshell/by-id/" | head -1)
 qs ipc -i "$id" call plugin-scan reload lainWidget
 qs ipc -i "$id" call plugin-scan status lainWidget   # ждём "loaded  desktop"
 ```
@@ -95,6 +96,10 @@ qs ipc -i "$id" call plugin-scan status lainWidget   # ждём "loaded  desktop
 `{ layer, jp, en }`: `layer` это подпись справа сверху, `jp` это строка над
 текстом (может быть пустой), `en` это основной текст. Правится руками,
 перезагрузка плагина подхватывает изменения.
+
+```js
+{ layer: "LAYER 01", jp: "こんにちは。", en: "Hello." },
+```
 
 ## Файлы
 

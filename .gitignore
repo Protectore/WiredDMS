@@ -11,3 +11,7 @@
 # None of this belongs in the repository
 /.idea/
 /.vscode/
+
+# Local media. The README links to a GitHub user-attachments URL instead, so
+# the demo GIF never has to live in the repository history.
+/wired.gif

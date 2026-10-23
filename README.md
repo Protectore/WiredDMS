@@ -1,22 +1,22 @@
-# WiredDMS - a "Wired (Lain)" widget for DankMaterialShell
+# WiredDMS
+
+A "Wired (Lain)" desktop widget for [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS).
 
 [English](README.md) | [Русский](README.ru.md)
 
-A CRT panel with scrolling messages in the spirit of *Serial Experiments Lain*:
-scanlines, character-by-character typing, glitches, a Japanese line above the
-English one, a clock in the corner.
+![License](https://img.shields.io/badge/license-MIT-b9c8da)
+![DMS](https://img.shields.io/badge/DankMaterialShell-%3E%3D%201.2.0-9ccbfb)
+![Quickshell](https://img.shields.io/badge/Quickshell-%3E%3D%200.3.2-9ccbfb)
 
-This is a desktop plugin for [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS),
-written in [Quickshell](https://quickshell.org/).
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/4b412028-7ac0-44b0-8831-290d9025d938" alt="The widget cycling through messages" width="640">
+</p>
 
-```
-┌────────────────────────────────────────────┐
-│ LAYER 07                          01:26:30 │
-│                                            │
-│ 神はここにいる。                             │
-│ God is here.▌                              │
-└────────────────────────────────────────────┘
-```
+A CRT panel that sits on your desktop and cycles through messages in the spirit
+of *Serial Experiments Lain*: scanlines, character-by-character typing, glitches,
+a Japanese line above the English one, and a clock in the corner.
+
+It is a desktop plugin for DMS, written in [Quickshell](https://quickshell.org/).
 
 ## Features
 
@@ -54,7 +54,7 @@ Then in DMS: **Settings -> Desktop -> add the "Wired (Lain)" widget**.
 After installing or editing plugin files, reload it:
 
 ```bash
-id=$(ls /run/user/1000/quickshell/by-id/ | head -1)
+id=$(ls "/run/user/$(id -u)/quickshell/by-id/" | head -1)
 qs ipc -i "$id" call plugin-scan reload lainWidget
 qs ipc -i "$id" call plugin-scan status lainWidget   # expect "loaded  desktop"
 ```
@@ -97,6 +97,10 @@ The list lives right in `LainDesktopWidget.qml` (the `messages` property), forma
 as `{ layer, jp, en }`: `layer` is the label in the top-right corner, `jp` is the
 line above the text (may be empty), `en` is the main text. Edit it by hand and
 reload the plugin to pick up the changes.
+
+```js
+{ layer: "LAYER 01", jp: "こんにちは。", en: "Hello." },
+```
 
 ## Files
 
