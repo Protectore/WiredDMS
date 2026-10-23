@@ -1,0 +1,18 @@
+{
+  "id": "lainWidget",
+  "name": "Wired (Lain)",
+  "description": "CRT-панель с сообщениями в духе Serial Experiments Lain. Таскается правой кнопкой, тянется за правый нижний угол, колесо мыши — кегль текста.",
+  "version": "1.0.0",
+  "license": "MIT",
+  "author": "Protectore",
+  "type": "desktop",
+  "capabilities": ["desktop-widget"],
+  "component": "./LainDesktopWidget.qml",
+  "settings": "./LainSettings.qml",
+  "icon": "terminal",
+  "requires_dms": ">=1.2.0",
+  "permissions": [
+    "settings_read",
+    "settings_write"
+  ]
+}
