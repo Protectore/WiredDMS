@@ -1,12 +1,12 @@
-// Виджет «Wired (Lain)» как DMS-плагин рабочего стола.
+// "Wired (Lain)" widget as a DMS desktop plugin.
 //
-// Что даёт обёртка DesktopPluginWrapper (см. Modules/Plugins/DesktopPluginWrapper.qml в DMS):
-//   • правая кнопка мыши по виджету — перетаскивание, правый нижний угол — ресайз;
-//   • размер и позиция на каждый монитор сохраняются в
+// What the DesktopPluginWrapper gives us (see Modules/Plugins/DesktopPluginWrapper.qml in DMS):
+//   • right mouse button on the widget drags it, bottom-right corner resizes it;
+//   • size and position are stored per monitor in
 //     ~/.local/state/DankMaterialShell/session.json → desktopWidgetInstancePositions;
-//   • пока виджет тащат, окно поднимается в слой Overlay, потом возвращается в Bottom;
-//   • клики проходят сквозь (clickThrough = true из дефолтного конфига),
-//     поэтому левая кнопка и колесо работают на том, что под виджетом.
+//   • while the widget is dragged, the window is raised to the Overlay layer, then back to Bottom;
+//   • clicks pass through (clickThrough = true in the default config), so the left
+//     button and the wheel reach whatever is underneath the widget.
 
 pragma ComponentBehavior: Bound
 
@@ -20,11 +20,11 @@ import qs.Modules.Plugins
 DesktopPluginComponent {
     id: root
 
-    // Ниже этого размера панель не сжать: тогда содержимое начнёт наезжать на рамку.
+    // The panel cannot be squeezed below this size: the content would overlap the frame.
     minWidth: 380
     minHeight: 170
 
-    /* ── крутилки (видны в настройках виджета в DMS) ───────────────────── */
+    /* ── knobs (exposed in the widget settings in DMS) ─────────────────── */
     readonly property int cycleInterval: pluginData.cycleInterval ?? 45
     readonly property int holdDuration: pluginData.holdDuration ?? 13
     readonly property int typeSpeed: pluginData.typeSpeed ?? 32
@@ -35,7 +35,7 @@ DesktopPluginComponent {
     readonly property real backgroundOpacity: (pluginData.backgroundOpacity ?? 66) / 100
     readonly property bool showJp: pluginData.showJp ?? true
 
-    /* ── тема: своя палитра либо цвета DMS ─────────────────────────────── */
+    /* ── theme: either our own palette or the DMS colors ───────────────── */
     readonly property bool useTheme: colorMode === "theme" || colorMode === "primary"
     readonly property color ink: useTheme ? Theme.surfaceText : customInk
     readonly property color dim: useTheme ? Theme.primary : Qt.rgba(customInk.r, customInk.g, customInk.b, 0.62)
@@ -46,7 +46,7 @@ DesktopPluginComponent {
         : Qt.rgba(0.024, 0.039, 0.043, backgroundOpacity)
     readonly property color glitchInk: useTheme ? Theme.error : "#ffb3bd"
 
-    /* ── заготовленные сообщения (правятся здесь; Messages.js в репозитории — источник) ── */
+    /* ── preset messages (edit them here) ──────────────────────────────── */
     readonly property var messages: [
         { layer: "LAYER 01", jp: "こんにちは。",            en: "Hello." },
         { layer: "LAYER 02", jp: "わたしはここにいる。",      en: "I am here." },
@@ -81,14 +81,14 @@ DesktopPluginComponent {
     readonly property string monoFont: pluginData.monoFont ?? "JetBrainsMono Nerd Font Mono"
     readonly property real basePixelSize: pluginData.fontPixelSize ?? 17
 
-    // Размер окна — из обёртки (item.widgetWidth/widgetHeight привязываются к окну).
+    // Window size comes from the wrapper (item.widgetWidth/widgetHeight are bound to the window).
     readonly property real fontScale: widgetHeight > 0 ? Math.max(0.55, Math.min(2.4, widgetHeight / 168)) : 1
     readonly property int enPixelSize: Math.max(9, Math.round(basePixelSize * fontScale))
     readonly property int jpPixelSize: Math.max(8, Math.round((basePixelSize - 4) * fontScale))
     readonly property int chromePixelSize: Math.max(7, Math.round(10 * fontScale))
     readonly property int pad: Math.max(6, Math.round(14 * fontScale))
 
-    /* ── состояние ─────────────────────────────────────────────────────── */
+    /* ── state ─────────────────────────────────────────────────────────── */
     property var current: null
     property int revealed: 0
     property bool typing: false
@@ -134,14 +134,14 @@ DesktopPluginComponent {
         holdTimer.stop();
     }
 
-    // Клик правой кнопкой без движения = перелистнуть сообщение (dragArea.released
-    // в обёртке тоже срабатывает, но после savePosition — позиция не пострадает).
+    // A right-click without movement advances to the next message (dragArea.released
+    // fires in the wrapper too, but after savePosition — the position is unaffected).
     function peekNext() {
         showNext();
     }
 
-    // Проверка снаружи: qs -c dms ipc call lainWidget ping
-    // и перелистнуть сообщение: qs -c dms ipc call lainWidget next
+    // Liveness check from the outside: qs -c dms ipc call lainWidget ping
+    // and to advance a message:          qs -c dms ipc call lainWidget next
     IpcHandler {
         target: "lainWidget"
 
@@ -157,7 +157,7 @@ DesktopPluginComponent {
         }
     }
 
-    /* ── таймеры ───────────────────────────────────────────────────────── */
+    /* ── timers ────────────────────────────────────────────────────────── */
     Timer {
         interval: typeSpeed
         repeat: true
@@ -232,11 +232,11 @@ DesktopPluginComponent {
         onTriggered: root.clock = Qt.formatTime(new Date(), "hh:mm:ss")
     }
 
-    // Длительность берём из темы DMS, а не хардкодом: обёртка
-    // (DesktopPluginWrapper.qml) вешает на лоадер свой revealFade длиной
-    // ровно Theme.mediumDuration и ту же кривую OutCubic. Если числа
-    // разойдутся, две кривые перемножатся — угасание станет резче в начале
-    // и вялым в хвосте. Держим в паре.
+    // Take the duration from the DMS theme instead of hardcoding it: the wrapper
+    // (DesktopPluginWrapper.qml) puts its own revealFade on the loader with a length
+    // of exactly Theme.mediumDuration and the same OutCubic curve. If the numbers
+    // diverge, the two curves multiply — the fade becomes abrupt at the start and
+    // sluggish in the tail. Keep them in sync.
     Behavior on contentOpacity {
         NumberAnimation {
             duration: Theme.mediumDuration
@@ -244,7 +244,7 @@ DesktopPluginComponent {
         }
     }
 
-    /* ── корпус ────────────────────────────────────────────────────────── */
+    /* ── chassis ───────────────────────────────────────────────────────── */
     Rectangle {
         id: frame
         anchors.fill: parent
@@ -254,7 +254,7 @@ DesktopPluginComponent {
         radius: 4
         clip: true
 
-        // сканлайны
+        // scanlines
         Item {
             anchors.fill: parent
             opacity: root.showing ? 1 : 0
@@ -402,8 +402,9 @@ DesktopPluginComponent {
             }
         }
 
-        // Колесо мыши по виджету — кегль текста. Живёт только пока DMS не
-        // перекрыл mask (clickThrough = false), иначе событие уходит вниз.
+        // Mouse wheel over the widget changes the font size. It only lives while
+        // DMS has not overridden the mask (clickThrough = false), otherwise the
+        // event goes through to what is underneath.
         MouseArea {
             anchors.fill: parent
             acceptedButtons: Qt.NoButton

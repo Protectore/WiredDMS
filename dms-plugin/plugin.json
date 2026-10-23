@@ -1,7 +1,7 @@
 {
   "id": "lainWidget",
   "name": "Wired (Lain)",
-  "description": "CRT-панель с сообщениями в духе Serial Experiments Lain. Таскается правой кнопкой, тянется за правый нижний угол, колесо мыши — кегль текста.",
+  "description": "CRT panel with messages in the spirit of Serial Experiments Lain. Drag with the right mouse button, resize from the bottom-right corner, wheel over it to change the font size.",
   "version": "1.0.0",
   "license": "MIT",
   "author": "Protectore",

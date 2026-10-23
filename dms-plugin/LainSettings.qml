@@ -1,6 +1,6 @@
-// Настройки виджета «Wired (Lain)» в DMS.
-// Хост (PluginDesktopWidgetSettings) сам кладёт сюда instanceData и instanceId,
-// поэтому пишем прямо в config этого экземпляра — у каждого своя палитра и ритм.
+// Settings for the "Wired (Lain)" widget in DMS.
+// The host (PluginDesktopWidgetSettings) injects instanceData and instanceId here,
+// so we write straight into this instance's config — each one has its own palette and rhythm.
 
 pragma ComponentBehavior: Bound
 
@@ -28,10 +28,10 @@ Column {
     spacing: 0
 
     SettingsDropdownRow {
-        text: "Палитра"
-        options: ["Своя (CRT)", "Тема DMS"]
-        currentValue: (cfg.colorMode ?? "custom") === "theme" ? "Тема DMS" : "Своя (CRT)"
-        onValueChanged: value => root.updateConfig("colorMode", value === "Тема DMS" ? "theme" : "custom")
+        text: "Palette"
+        options: ["Custom (CRT)", "DMS theme"]
+        currentValue: (cfg.colorMode ?? "custom") === "theme" ? "DMS theme" : "Custom (CRT)"
+        onValueChanged: value => root.updateConfig("colorMode", value === "DMS theme" ? "theme" : "custom")
     }
 
     SettingsDivider {
@@ -42,50 +42,50 @@ Column {
         visible: (cfg.colorMode ?? "custom") !== "theme"
         colorMode: "custom"
         customColor: cfg.customInk ?? "#dff3f5"
-        pickerTitle: "Цвет текста панели"
+        pickerTitle: "Panel text color"
         onCustomColorSelected: selectedColor => root.updateConfig("customInk", selectedColor.toString())
     }
 
     SettingsDivider {}
 
     SettingsSliderRow {
-        text: "Пауза между сообщениями"
+        text: "Pause between messages"
         minimum: 5
         maximum: 300
         step: 5
         value: cfg.cycleInterval ?? 45
-        unit: " с"
+        unit: " s"
         onSliderValueChanged: newValue => root.updateConfig("cycleInterval", newValue)
     }
 
     SettingsDivider {}
 
     SettingsSliderRow {
-        text: "Сколько сообщение на экране"
+        text: "How long a message stays on screen"
         minimum: 3
         maximum: 120
         step: 1
         value: cfg.holdDuration ?? 13
-        unit: " с"
+        unit: " s"
         onSliderValueChanged: newValue => root.updateConfig("holdDuration", newValue)
     }
 
     SettingsDivider {}
 
     SettingsSliderRow {
-        text: "Скорость печати"
+        text: "Typing speed"
         minimum: 5
         maximum: 150
         step: 1
         value: cfg.typeSpeed ?? 32
-        unit: " мс/символ"
+        unit: " ms/char"
         onSliderValueChanged: newValue => root.updateConfig("typeSpeed", newValue)
     }
 
     SettingsDivider {}
 
     SettingsToggleRow {
-        text: "Случайный порядок сообщений"
+        text: "Random message order"
         checked: cfg.randomOrder ?? false
         onToggled: checked => root.updateConfig("randomOrder", checked)
     }
@@ -93,7 +93,7 @@ Column {
     SettingsDivider {}
 
     SettingsToggleRow {
-        text: "Показывать японскую строку"
+        text: "Show the Japanese line"
         checked: cfg.showJp ?? true
         onToggled: checked => root.updateConfig("showJp", checked)
     }
@@ -101,7 +101,7 @@ Column {
     SettingsDivider {}
 
     SettingsSliderRow {
-        text: "Прозрачность фона"
+        text: "Background opacity"
         minimum: 0
         maximum: 100
         step: 2
@@ -113,7 +113,7 @@ Column {
     SettingsDivider {}
 
     SettingsSliderRow {
-        text: "Базовый кегль текста (колесо мыши по виджету — быстрее)"
+        text: "Base font size (wheel over the widget is faster)"
         minimum: 11
         maximum: 34
         step: 1

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Устанавливает виджет «Wired (Lain)» как DMS-плагин рабочего стола.
-# Копирует dms-plugin/* в ~/.config/DankMaterialShell/plugins/lainWidget/.
+# Installs the "Wired (Lain)" widget as a DMS desktop plugin.
+# Copies dms-plugin/* into ~/.config/DankMaterialShell/plugins/lainWidget/.
 #
-# Экземпляр виджета создаётся не здесь: в DMS → Настройки → Рабочий стол →
-# добавить виджет «Wired (Lain)». Подробности и обходной путь — в README.md.
+# The widget instance is not created here: do it in DMS → Settings → Desktop →
+# add the "Wired (Lain)" widget.
 
 set -euo pipefail
 
@@ -12,24 +12,21 @@ src="$here/dms-plugin"
 dst="$HOME/.config/DankMaterialShell/plugins/lainWidget"
 
 if [ ! -f "$src/plugin.json" ]; then
-    echo "! нет $src/plugin.json — запускать из каталога виджета" >&2
+    echo "! no $src/plugin.json — run this from the widget directory" >&2
     exit 1
 fi
 
 mkdir -p "$dst"
 install -m 644 "$src/plugin.json" "$src/LainDesktopWidget.qml" "$src/LainSettings.qml" "$dst/"
 
-echo "ok: плагин установлен в $dst"
+echo "ok: plugin installed to $dst"
 echo
-echo "Дальше:"
-echo "  1) в DMS добавь виджет: Настройки → Рабочий стол → «Wired (Lain)»"
-echo "  2) после установки/правки файлов перезагрузи плагин:"
+echo "Next:"
+echo "  1) add the widget in DMS: Settings → Desktop → \"Wired (Lain)\""
+echo "  2) after installing or editing plugin files, reload it:"
 echo "       id=\$(ls /run/user/1000/quickshell/by-id/ | head -1)"
 echo "       qs ipc -i \$id call plugin-scan reload lainWidget"
-echo "       qs ipc -i \$id call plugin-scan status lainWidget   # ждём 'loaded  desktop'"
+echo "       qs ipc -i \$id call plugin-scan status lainWidget   # expect 'loaded  desktop'"
 echo
-echo "     Внимание: rescan выгружает плагин и обратно НЕ поднимает —"
-echo "     виджет пропадёт с экрана. Поднимает только reload."
-echo
-echo "Проверка живости:"
-echo "  qs ipc -i \$id call lainWidget ping"
+echo "     Note: rescan unloads the plugin and does NOT bring it back —"
+echo "     the widget will disappear from the screen. Only reload brings it up."
